@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_css_bootstrap.min.css">
+  <style>
+    input:focus{
+      outline: none!important;
+      box-shadow: none!important;
+    }
+    textarea:focus{
+      outline: none!important;
+      box-shadow: none!important;
+    }
+    select:focus{
+      outline: none!important;
+      box-shadow: none!important;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column align-items-center w-100 justify-content-center text-center">
+  <h2 class="mb-0">Register</h2>
+
+  <form action="/register" method="post" enctype="multipart/form-data" class="d-flex text-start w-25 flex-column">
+      <div>
+        <lable>Enter Username :-</lable>
+        <input type="text" name="username" placeholder="Username" class="form-control" >
+      </div><br>
+      <div>
+        <label>Enter Email :-</label>
+        <input class="form-control" type="email" name="email" placeholder="Email">
+      </div><br>
+      <div>
+        <label>Enter Password :-</label>
+        <input class="form-control" type="password" name="password" placeholder="Password">
+      </div><br>
+      <div>
+        <label>Enter Confirm Password :-</label>
+        <input class="form-control" type="password" name="cpassword" placeholder="Confirm Password">
+      </div><br>
+      <div>
+        <label>Select Gender :-</label>
+        <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
+      </div><br>
+      <div>
+        <label>Select City :-</label>
+        <select name="city" class="form-control">
+          <option value="Surat">Surat</option>
+          <option value="Dang">Dang</option>
+          <option value="Navasari">Navasari</option>
+          <option value="Ahmadabad">Ahmadabad</option>
+        </select>
+      </div><br>
+      <div>
+        <label>Enter Phone no :-</label>
+        <input class="form-control" type="number" name="phone" placeholder="Phone">
+      </div><br>
+      <div>
+        <label>Choose Image :-</label>
+        <input class="form-control" type="file" name="img">
+      </div><br>
+      <div>
+        <label>Enter Address :-</label>
+        <textarea name="address" id="address" cols="30" rows="5" class="form-control" placeholder="Address"></textarea>
+      </div><br>
+      <input type="submit" name="submit" value="Register" class="btn text-white btn-primary mb-3">
+    </form>
+    <a href="/">Login</a>
+</body>
+</html>
+<script src="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_js_bootstrap.bundle.min.js"></script>

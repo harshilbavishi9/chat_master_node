@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_css_bootstrap.min.css">
+  <style>
+      input:focus{
+        outline: none!important;
+        box-shadow: none!important;
+      }
+  </style>
+</head>
+<body>
+  <form action="/Login" method="post" class="d-flex align-items-center justify-content-center flex-column vh-100">
+    <h1>Login</h1>
+    <div>
+      <label>Enter Email :-</label>
+      <input class="form-control" type="email" name="email" placeholder="Email">
+    </div><br>
+    <div>
+      <label>Enter Password :-</label>
+      <input class="form-control" type="password" name="password" placeholder="Password">
+    </div><br>
+    <input type="submit" name="submit" value="Login" class="btn text-white btn-primary mb-3">
+    <a href="/register">Register</a>
+  </form>
+</body>
+</html>
+<script src="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_js_bootstrap.bundle.min.js"></script>

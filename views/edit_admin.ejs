@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <p style="color: red;"> <%= msg %></p>
+  <form action="/editData" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="adminId" value="<%= data.id %>">
+    <table>
+      <tr>
+        <td>Enter Username :-</td>
+        <td><input value="<%= data.username %>" type="text" name="username" placeholder="Username"></td>
+      </tr>
+      <tr>
+        <td>Enter Email :-</td>
+        <td><input value="<%= data.email %>" type="text" name="email" placeholder="Email"></td>
+      </tr>
+      <tr>
+        <td>Select Gender :-</td>
+        <td><input type="radio" name="gender" value="male" <% if(data.gender == 'male') { %> <%= "checked" %> <% } %>>Male
+        <input type="radio" name="gender" value="female" <% if(data.gender == 'female') { %> <%= "checked" %> <% } %>>Female</td>
+      </tr>
+      <tr>
+        <td>Select City :-</td>
+        <td><select name="city">
+          <option value="Surat" <% if(data.city == 'Surat') { %> <%= "selected" %> <% } %>>Surat</option>
+          <option value="Dang" <% if(data.city == 'Dang') { %> <%= "selected" %> <% } %>>Dang</option>
+          <option value="Navasari" <% if(data.city == 'Navasari') { %> <%= "selected" %> <% } %>>Navasari</option>
+          <option value="Ahmadabad" <% if(data.city == 'Ahmadabad') { %> <%= "selected" %> <% } %>>Ahmadabad</option>
+        </select></td>
+      </tr>
+      <tr>
+        <td>Enter Phone no :-</td>
+        <td><input type="number" name="phone" placeholder="Phone" value="<%= data.phone %>"></td>
+      </tr>
+      <tr>
+        <td>Choose Images :-</td>
+        <td><input type="file" name="imgs" multiple></td>
+      </tr>
+      <tr>
+        <td>Enter Address :-</td>
+        <td><textarea name="address" id="address" cols="30" rows="5" placeholder="Address"><%= data.address %></textarea></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" value="Edit"></td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>

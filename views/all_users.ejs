@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_css_bootstrap.min.css">
+  <style>
+      input:focus{
+        outline: none!important;
+        box-shadow: none!important;
+      }
+  </style>
+</head>
+<body>
+    <div class="container">
+      <h1>All Users</h1>
+      <table border="1" class="table  text-center">
+        <tr>
+          <td>Image</td>
+          <td>Username</td>
+          <td>Email</td>
+          <td>Gender</td>
+          <td>City</td>
+          <td>Phone</td>
+          <!-- <td>Address</td> -->
+          <!-- <td>Action</td> -->
+        </tr>
+        <% if(admins.length > 0) { for(var i of admins) { %>
+          <tr>
+            <td><img src="<%= i.img %>" width="100px"></td>
+            <td><%= i.username %></td>
+            <td><%= i.email %></td>
+            <td><%= i.gender %></td>
+            <td><%= i.city %></td>
+            <td><%= i.phone %></td>
+            <!-- <td><%= i.address %></td> -->
+            <!-- <td><a href="/deleteData/<%= i.id %>">Delete</a> || <a href="/updateData/<%= i.id %>">Edit</a></td> -->
+          </tr>
+        <% }} else { %> <h1>No Data Found.</h1> <% } %>
+      </table>
+    </div>
+</body>
+</html>
+<script src="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_js_bootstrap.bundle.min.js"></script>

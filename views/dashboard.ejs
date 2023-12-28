@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="stylesheet" href="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_css_bootstrap.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    integrity="sha512-ZnR2wlLbSbr8/c9AgLg3jQPAattCUImNsae6NHYnS9KrIwRdcY9DxFotXhNAKIKbAXlRnujIqUWoXXwqyFOeIQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    #chat {
+      display: none;
+    }
+
+    input:focus {
+      box-shadow: none !important;
+      outline: none !important;
+    }
+
+    ul {
+      list-style: none !important;
+    }
+
+    .status {
+      color: red;
+    }
+
+    .red {
+      color: red;
+    }
+
+    .green {
+      color: green;
+    }
+
+    .header {
+      border-bottom: 1px solid #cccccc;
+    }
+
+    .user_profile {
+      display: none;
+    }
+
+    .img {
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="w-100 d-flex mb-4 py-3">
+      <h1 class="mb-0" style="text-transform: capitalize">
+        <a href="/profile/<%= admin.id %>" class="text-dark">
+          <%= admin.username %>
+        </a>
+      </h1>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 shadow-lg p-5">
+        <form action="" class="mb-5">
+          <input type="text" name="search" id="search" placeholder="Search User" class="form-control py-2 px-3 fs-4"
+            onkeyup="return SearchUser()" />
+        </form>
+        <div class="users" style="height: 574px; overflow-y: auto">
+          <% for(var i of admins) { %>
+            <div class="user d-flex align-items-center mb-4" style="cursor: pointer" data-id="<%= i.id %>">
+              <img src="<%= i.img %>" style="width: 50px; border-radius: 50%; height: 50px" />
+              <div class="ps-4">
+                <h5 class="mb-0" style="text-transform: capitalize">
+                  <%= i.username %>
+                </h5>
+                <% if(i.isOnline==true) { %>
+                  <p class="status mb-0 green" id="<%= i.id %>-status">Online</p>
+                  <% } else { %>
+                    <p class="status mb-0 red" id="<%= i.id %>-status">Offline</p>
+                    <% } %>
+              </div>
+            </div>
+            <% } %>
+        </div>
+        <div class="justify-content-center d-flex align-items-center">
+          <a href="/logout" class="btn btn-primary px-4 text-white">Log Out</a>
+        </div>
+      </div>
+      <div class="col-lg-8 position-relative px-5 pt-5">
+        <div class="chat" id="chat">
+          <div class="header pb-3" id="header">
+            <div class="d-flex details" id="details" style="cursor: pointer" data-id="<%= i.id %>">
+              <img src="<%= i.img %>" style="
+                                                        width: 50px;
+                                                        border-radius: 50%;
+                                                        object-fit: cover;
+                                                        height: 50px;
+                                                      " />
+              <div class="ps-4">
+                <h4 class="mb-0" style="text-transform: capitalize">
+                  <%= i.username %>
+                </h4>
+              </div>
+            </div>
+          </div>
+          <div id="chat-box" class="py-3" style="height: 600px; overflow-y: auto">
+            <ul id="chats" class="mb-0 px-5"></ul>
+          </div>
+          <form id="form">
+            <input type="text" name="msg" id="msg" class="form-control py-2 px-3 fs-4" placeholder="Message..." />
+          </form>
+        </div>
+        <div id="user_profile"
+          class="user_profile position-absolute top-0 start-0 w-100 h-100 text-center align-items-center flex-column justify-content-center bg-white shadow">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+
+<script src="/cdnjs.cloudflare.com_ajax_libs_bootstrap_5.3.0_js_bootstrap.bundle.min.js"></script>
+<script src="/cdnjs.cloudflare.com_ajax_libs_socket.io_4.7.1_socket.io.js"></script>
+<script src="/jquery.min.js"></script>
+<script src="/index.js"></script>
+<script>
+  var current_id = "<%= admin._id %>";
+  var other_id = "";
+  var socket = io("/user", {
+    auth: {
+      token: current_id,
+    },
+  });
+
+  showUser();
+
+  function timeSince(timestamp) {
+    let time = Date.parse(timestamp);
+    let now = Date.now();
+    let secondsPast = (now - time) / 1000;
+    let intervals = {
+      hour: 3600,
+      minute: 60,
+      second: 1,
+    };
+
+    for (let i in intervals) {
+      let interval = intervals[i];
+      if (secondsPast >= interval) {
+        let count = Math.floor(secondsPast / interval);
+        return `${count} ${i} ago`;
+      }
+    }
+  }
+
+  function SearchUser() {
+    let search = document.getElementById("search").value;
+    $.ajax({
+      url: `/search?search=${search}`,
+      type: "GET",
+      success: (res) => {
+        if (res.length > 0) {
+          $(".users").html("");
+          html = "";
+          for (let i of res) {
+            html += `
+                <div class="user d-flex align-items-center mb-4" style="cursor: pointer;" data-id="${i._id
+              }">
+                  <img src="${i.img
+              }" style="width:50px; border-radius: 50%; object-fit: cover; height:50px;">
+                  <div class="ps-4">
+                    <h5 class="mb-0" style="text-transform: capitalize;">${i.username
+              }</h5>
+                    ${i.isOnline == true
+                ? `<p class="status mb-0 green" id="${i._id}-status">Online</p>`
+                : `<p class="status mb-0 red" id="${i._id}-status">Offline</p>`
+              }
+                  </div>
+                </div>
+              `;
+          }
+          $(".users").append(html);
+          showUser();
+        } else {
+          $(".users").html("");
+          $(".users").append("User not found.");
+        }
+      },
+    });
+  }
+
+  function showUser() {
+    const chat = document.getElementById("chat");
+    const user = document.querySelectorAll(".user");
+    user.forEach((e) => {
+      e.addEventListener("click", () => {
+        $("#chats").html("");
+        chat.classList.add("d-block");
+        $("#user_profile").removeClass("d-flex");
+        other_id = e.getAttribute("data-id");
+
+        socket.emit("viewUser", { otherId: other_id });
+        let html = "";
+        let header = document.getElementById("header");
+
+        socket.emit("fetchChats", {
+          senderId: current_id,
+          receiverId: other_id,
+        });
+
+        socket.on("getUser", (data) => {
+          let user = data.data;
+          html += `
+                <div class="d-flex details" id="details" style="cursor:pointer" data-id="${user._id
+            }">
+                  <img src="${user.img
+            }" style="width:50px; border-radius: 50%; object-fit: cover; height:50px;"> 
+                  <div class="ps-4">
+                    <h4 class="mb-0" style="text-transform: capitalize;">${user.username
+            }</h4>
+                    <p class="mb-0">${user.isOnline == false ? timeSince(user.updatedAt) : "Online"
+            }</p>
+                  </div>
+                </div>
+            `;
+          header.innerHTML = html;
+        });
+      });
+    });
+  }
+
+  function CloseBox() {
+    $("#user_profile").removeClass("d-flex");
+    $("#user_profile").html("");
+  }
+
+  $("#form").submit((e) => {
+    let msgs = document.getElementById("msg").value;
+    e.preventDefault();
+    $.ajax({
+      url: "/chat/add_chat",
+      type: "POST",
+      data: {
+        senderId: current_id,
+        receiverId: other_id,
+        msg: msgs,
+        msgtime: new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        }),
+      },
+      success: (res) => {
+        if (res.success) {
+          msg.value = "";
+          let chat = res.data.msg;
+          let msgtime = res.data.msgtime;
+          let html = `<li class="text-end mb-3 fs-4"><h4 class="mb-0">${chat}</h4><p style="font-size: 12px;">${msgtime}</p></li>`;
+          $("#chats").append(html);
+
+          socket.emit("newChat", res.data);
+
+          $.ajax({
+            url: "/sort_users",
+            type: "GET",
+            success: (res) => {
+              $(".users").html("");
+              html = "";
+              let user = res.data;
+              for (let i = 0; i < user.length; i++) {
+                html += `
+                    <div class="user d-flex align-items-center mb-4" style="cursor: pointer;" data-id="${user[i]._id
+                  }" onclick="return FetchDetail()">
+                      <img src=${user[i].img
+                  } style="width:50px; border-radius: 50%; object-fit: cover; height:50px;">
+                      <div class="ps-4">
+                        <h5 class="user mb-0" style="text-transform: capitalize;">${user[i].username
+                  }</h5>
+                        ${user[i].isOnline == true
+                    ? `<p class="status mb-0 green" id="${user[i]._id}-status">Online</p>`
+                    : `<p class="status mb-0 red" id="${user[i]._id}-status">Offline</p>`
+                  }
+                      </div>
+                    </div>`;
+              }
+              $(".users").append(html);
+
+              showUser();
+
+              socket.emit("sortUsers", { data: res.data, id: other_id });
+            },
+          });
+        } else {
+          alert(res.msg);
+        }
+      },
+    });
+  });
+
+  $("#header").click(() => {
+    let id = $("#details").attr("data-id");
+    $(".user_profile").addClass("d-flex");
+
+    socket.emit("fetchDetail", id);
+  });
+
+  socket.on("loadUser", (data) => {
+    $(".users").html("");
+    html = "";
+    let user = data.data;
+    for (let i = 0; i < user.length; i++) {
+      html += `
+          <div class="user d-flex align-items-center mb-4" style="cursor: pointer;" data-id="${user[i]._id
+        }">
+            <img src=${user[i].img
+        } style="width:50px; border-radius: 50%; object-fit: cover; height:50px;">
+            <div class="ps-4">
+              <h5 class="user mb-0" style="text-transform: capitalize;">${user[i].username
+        }</h5>
+              ${user[i].isOnline == true
+          ? `<p class="status mb-0 green" id="${user[i]._id}-status">Online</p>`
+          : `<p class="status mb-0 red" id="${user[i]._id}-status">Offline</p>`
+        }
+            </div>
+          </div>`;
+    }
+    $(".users").append(html);
+
+    showUser();
+  });
+
+  socket.on("loadChats", (data) => {
+    let chats = data.chats;
+    html = "";
+    chats.map((msg, i) => {
+      let addClass = "";
+      if (msg["senderId"] == current_id) {
+        addClass = "text-end";
+      } else {
+        addClass = "text-start";
+      }
+      html += `<li class="${addClass} mb-3 fs-4"><h4 class="mb-0">${msg.msg}</h4><p style="font-size: 12px;">${msg.msgtime}</p></li>`;
+    });
+    $("#chats").append(html);
+  });
+
+  socket.on("loadDetail", (data) => {
+    $("#user_profile").html("");
+    let fdata = data.data;
+    let html = `
+          <i class="bi bi-x text-dark position-absolute fs-1" id="close" style="top:20px; right:30px; cursor:pointer" onclick="return CloseBox()"></i>
+          <img src=${fdata.img
+      } style="width:100px; border-radius: 50%; object-fit: cover; height:100px;" id="img" onclick="return ImgScale()">
+          <h3 class="mt-4" style="text-transform: capitalize;">${fdata.username
+      }</h3>
+          <h4 class="text-secondary">+91 ${fdata.phone}</h4>
+          <h4>${fdata.city}</h4>
+          <p class="mb-0">${fdata.caption || "Caption for Mantsapp"}</p>`;
+    $("#user_profile").append(html);
+  });
+
+  socket.on("onlineStatus", (data) => {
+    $("#" + data.userId + "-status").text("Online");
+    $("#" + data.userId + "-status").removeClass("red");
+    $("#" + data.userId + "-status").addClass("green");
+  });
+
+  socket.on("offlineStatus", (data) => {
+    $("#" + data.userId + "-status").text("Offline");
+    $("#" + data.userId + "-status").removeClass("green");
+    $("#" + data.userId + "-status").addClass("red");
+  });
+
+  socket.on("loadNewChat", (data) => {
+    let html = `<li class="text-start mb-3 fs-4"><h4>${data.data.msg}</h4><p>${data.data.msgtime}</p></li>`;
+    $("#chats").append(html);
+  });
+</script>
